@@ -1,0 +1,55 @@
+debug: true
+log-file: /var/log/orbrs.log
+
+triggers:
+  my_nats_trigger:
+    type: nats
+    name: orbrs-nats-trigger
+    address: 192.168.1.131:4222
+    subject: orbrs.events.in
+    num-workers: 1
+
+    processors: 
+      - "proc1"
+    actions: 
+      - "dummy_action"
+    outputs: 
+      - my_nats_output
+    
+outputs:
+  my_nats_output:
+    type: nats
+    name: orbrs-nats-output
+    address: 192.168.1.131:4222
+    subject: orbrs.events.out
+    num-workers: 1
+    #processors: ["proc1"]
+
+actions:
+  dummy_action:
+    type: noop
+    outputs:
+      - my_nats_output
+  
+  gnmi_action:
+    type: gnmi
+    condition: (.name == "sub1" && .source == "172.1.1.1:57400")
+    threshold: 1
+    window: 10s
+    pre-processors: []
+    #post-processors: ["proc3"]
+    outputs: []
+
+    rpc: set
+    paths: 
+      - .values["/interface/"]
+    encoding:
+    values:
+
+processors:
+  proc1:
+    type: jq
+    # execution condition
+    condition:
+    # transformation expression
+    expression: '.[] | .name'

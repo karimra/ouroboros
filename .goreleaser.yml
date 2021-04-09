@@ -1,0 +1,62 @@
+project_name: ouroboros
+builds:
+  - env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/karimra/ouroboros/app.version={{.Version}} -X github.com/karimra/ouroboros/app.commit={{.ShortCommit}} -X github.com/karimra/ouroboros/app.date={{.Date}} -X github.com/karimra/ouroboros/app.gitURL={{.GitURL}}
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - 386
+      - arm
+      - arm64
+    hooks:
+      post: upx "{{ .Path }}"
+dockers:
+  - goos: linux
+    goarch: amd64
+    binaries:
+      - ouroboros
+    image_templates:
+      - "ghcr.io/karimra/ouroboros:latest"
+      - 'ghcr.io/karimra/ouroboros:{{ replace .Version "v" ""}}'
+    dockerfile: goreleaser.dockerfile
+    skip_push: false
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      amd64: x86_64
+      386: i386
+      arm: armv7
+      arm64: aarch64
+checksum:
+  name_template: "checksums.txt"
+snapshot:
+  name_template: "{{ .Tag }}"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+nfpms:
+  - id: ouroboros
+    file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    replacements:
+      amd64: x86_64
+      386: i386
+      darwin: Darwin
+      linux: Linux
+    vendor: ouroboros
+    homepage: https://ouroboros.kmrd.dev
+    maintainer: Karim Radhouani <medkarimrdi@gmail.com>
+    description: Closed Loop Network Automation tool
+    license: Apache 2.0
+    formats:
+      - deb
+      - rpm
+    bindir: /usr/local/bin
