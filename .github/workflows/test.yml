@@ -19,7 +19,7 @@ jobs:
         env:
           CGO_ENABLED: 0
 
-      - name: Staticcheck
-        run: |
-          go get -u honnef.co/go/tools/cmd/staticcheck
-          staticcheck ./...
+      # - name: Staticcheck
+      #   run: |
+      #     go get -u honnef.co/go/tools/cmd/staticcheck
+      #     staticcheck ./...
