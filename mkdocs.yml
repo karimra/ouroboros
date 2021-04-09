@@ -1,7 +1,8 @@
 site_name: Ouroboros
 nav:
   - Home: index.md
-
+  - Getting Started: getting_started.md
+  
 site_author: Karim Radhouani
 site_description: >-
   Ouroboros is a Closed Loop automation tool
